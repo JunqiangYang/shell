@@ -1,0 +1,8 @@
+#!/bin/bash
+#script dir
+SCRIPT_DIR=`dirname "$0"`
+SCRIPT_DIR=`cd $SCRIPT_DIR;pwd`
+PROJECT_NAME=$1
+USERNAME=$2
+PASSWORD=$3
+sh $SCRIPT_DIR/base_create.sh 1 $PROJECT_NAME $USERNAME $PASSWORD

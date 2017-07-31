@@ -1,0 +1,99 @@
+#工具脚本使用流程
+#===================================
+#方式1: 以环境命令行工具使用（linux）
+    Step1: 创建独立工作空间
+        . single_spance.sh $projectName
+    Step2：更新环境配置文件（测试/正式）
+        测试: test_env.config
+                #svn project address
+                svn_addr="svn://10.160.29.168/trunk/app_service_template"
+                #test deploy address
+                deploy_addrs="
+                10.160.15.211:20882
+                "
+                # deploy path
+                deploy_path="/data/dubbo"
+                # sync config address
+                sync_config_addr="curl -s 10.160.20.71:12307/sp2p_config/getwithipport.c?ipport=ipport_value\&env=0"
+        正式：formal_env.config
+                #svn project address
+                svn_addr="svn://10.160.29.168/trunk/app_service_template"
+				#formal deploy address
+                deploy_addrs="
+                10.45.53.36:20882
+                10.46.78.186:20882
+                "
+                # deploy path
+                deploy_path="/data/dubbo"
+                # sync config address
+                sync_config_addr="curl -s 10.160.20.71:12307/sp2p_config/getwithipport.c?ipport=ipport_value\&env=1"
+    Step3: 创建新的app服务项目
+        sh create_project.sh $projectName $svnusername $svnpassword
+    Step4: checkout要部署的项目(-t:测试环境,-f正式环境)
+        sh checkout.sh -t
+    Step5:打部署包
+        sh pack.sh
+    Step6:发布部署包
+        sh pulish.sh –t
+    Step7:启动服务
+        sh deploy -t
+#方式2：以普通脚本工具使用
+    Step1:获取工具包
+        svn checkout svn://10.160.29.168/trunk/app_service_template/sbin/tool_bin  tool_bin
+    Step2:进入工具目录
+        cd tool_bin
+    Step3: 接下来的步骤同“方式1”: Step2、Step3、Step4、Step5、Step6、Step7
+
+#脚本介绍
+#=====================================
+# single_space.sh
+	此脚本用于准备独立发布空间对于项目
+	举例：
+		. single_space.sh myprojectname
+
+# create_project.sh
+	此脚本用于创建新的APP SERVICE 项目
+	举例:
+		sh create_project.sh myproject myname mypassword
+# create_project_mvn.sh
+	此脚本用于创建新的APP SERVICE 项目,项目结构为mvn项目
+	举例:
+		sh create_project_mvn.sh myproject myname mypassword
+# all_nocreate.sh
+	此脚本的行为依次由以下脚本组成：
+	checkout.sh
+	pack.sh
+	publish.sh
+	deploy.sh
+# checkout.sh
+	从SVN中获取项目（checkout）
+	举例:
+		sh checkout.sh -t/-ts/-st 
+		或
+		sh checkout.sh -f/-fs/-sf
+# pack.sh
+	将当前项目打成部署包
+	例如：
+		appservice-0.0.1.dy
+	举例：
+		sh pack.sh
+# publish.sh 
+	将部署包发布至目标地址
+	举例：
+		sh publish.sh -t
+		或
+		sh publish.sh -f
+# deploy.sh 
+	(重)启动服务
+	举例：
+		sh deploy.sh -t start/stop/status
+		或
+		sh deploy.sh -f start/stop/status
+# cmd.sh
+ 	在远程服务器执行命令
+ 	举例：
+ 		sh cmd.sh -t "jps"
+# test_env.config
+	测试环境信息配置
+# formal_env.config
+	正式环境信息配置
